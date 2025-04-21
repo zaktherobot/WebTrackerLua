@@ -1,0 +1,7 @@
+assets:
+- method: copy
+  name: scripts/WebTracker.lua
+  source:
+  - name: WebTracker.lua
+description: See the lua for details
+title: WebTracker.lua
