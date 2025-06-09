@@ -181,6 +181,7 @@ function _OnInit()
     Save = kh2lib.Save
     Sys3Pointer = kh2lib.Sys3Pointer
     MSN = kh2lib.MSN
+    BtlEnd = kh2lib.BtlEnd
 end
 
 function Events(M,B,E) --Check for Map, Btl, and Evt
@@ -252,7 +253,17 @@ function keyItemUpdate(table,tableEntry,inv,outstring)
     end
 end
 
-function detect_changes()
+function bossBeaten(table,tableEntry,world,room,evtId,outstring)
+    if table[tableEntry] == 0 then
+        -- time to check if we are in the right place and completed the event
+        if World==world and Room==room and BossEvt==evtID and EvtComplete==1 then
+            table[tableEntry] = 1
+            write_new_bingo_line(outstring)
+        end
+    end
+end
+
+function detect_item_changes()
     -- determine if we found any new items
     ItemSet1 = ReadByte(kh2lib.ItemSet1)
     ItemSet5 = ReadByte(kh2lib.ItemSet5)
@@ -261,67 +272,83 @@ function detect_changes()
     ItemSet11 = ReadByte(kh2lib.ItemSet11)
     
     -- Drives
-    bitChange(trackerTable,"Valor",ItemSet1,0x02,"Valor Form")
-    bitChange(trackerTable,"Wisdom",ItemSet1,0x04,"Wisdom Form")
-    bitChange(trackerTable,"Final",ItemSet1,0x10,"Final Form")
-    bitChange(trackerTable,"Master",ItemSet1,0x40,"Master Form")
-    bitChange(trackerTable,"Limit",ItemSet11,0x08,"Limit Form")
+    bitChange(trackerTable,"Valor",ItemSet1,0x02,"✨ Valor Form")
+    bitChange(trackerTable,"Wisdom",ItemSet1,0x04,"✨ Wisdom Form")
+    bitChange(trackerTable,"Final",ItemSet1,0x10,"✨ Final Form")
+    bitChange(trackerTable,"Master",ItemSet1,0x40,"✨ Master Form")
+    bitChange(trackerTable,"Limit",ItemSet11,0x08,"✨ Limit Form")
 
     -- Reports
-    bitChange(trackerTable,"Report1",ItemSet5,0x40,"Ansem Report 1")
-    bitChange(trackerTable,"Report2",ItemSet5,0x80,"Ansem Report 2")
-    bitChange(trackerTable,"Report3",ItemSet6,0x01,"Ansem Report 3")
-    bitChange(trackerTable,"Report4",ItemSet6,0x02,"Ansem Report 4")
-    bitChange(trackerTable,"Report5",ItemSet6,0x04,"Ansem Report 5")
-    bitChange(trackerTable,"Report6",ItemSet6,0x08,"Ansem Report 6")
-    bitChange(trackerTable,"Report7",ItemSet6,0x10,"Ansem Report 7")
-    bitChange(trackerTable,"Report8",ItemSet6,0x20,"Ansem Report 8")
-    bitChange(trackerTable,"Report9",ItemSet6,0x40,"Ansem Report 9")
-    bitChange(trackerTable,"Report10",ItemSet6,0x80,"Ansem Report 10")
-    bitChange(trackerTable,"Report11",ItemSet7,0x01,"Ansem Report 11")
-    bitChange(trackerTable,"Report12",ItemSet7,0x02,"Ansem Report 12")
-    bitChange(trackerTable,"Report13",ItemSet7,0x04,"Ansem Report 13")
+    bitChange(trackerTable,"Report1",ItemSet5,0x40,"❤ Ansem Report 1")
+    bitChange(trackerTable,"Report2",ItemSet5,0x80,"❤ Ansem Report 2")
+    bitChange(trackerTable,"Report3",ItemSet6,0x01,"❤ Ansem Report 3")
+    bitChange(trackerTable,"Report4",ItemSet6,0x02,"❤ Ansem Report 4")
+    bitChange(trackerTable,"Report5",ItemSet6,0x04,"❤ Ansem Report 5")
+    bitChange(trackerTable,"Report6",ItemSet6,0x08,"❤ Ansem Report 6")
+    bitChange(trackerTable,"Report7",ItemSet6,0x10,"❤ Ansem Report 7")
+    bitChange(trackerTable,"Report8",ItemSet6,0x20,"❤ Ansem Report 8")
+    bitChange(trackerTable,"Report9",ItemSet6,0x40,"❤ Ansem Report 9")
+    bitChange(trackerTable,"Report10",ItemSet6,0x80,"❤ Ansem Report 10")
+    bitChange(trackerTable,"Report11",ItemSet7,0x01,"❤ Ansem Report 11")
+    bitChange(trackerTable,"Report12",ItemSet7,0x02,"❤ Ansem Report 12")
+    bitChange(trackerTable,"Report13",ItemSet7,0x04,"❤ Ansem Report 13")
 
     -- magic
-    magicUpdate(trackerTable,"Fire",ReadByte(kh2lib.Fire),"Firaga")
-    magicUpdate(trackerTable,"Blizzard",ReadByte(kh2lib.Blizzard),"Blizzaga")
-    magicUpdate(trackerTable,"Thunder",ReadByte(kh2lib.Thunder),"Thundaga")
-    magicUpdate(trackerTable,"Cure",ReadByte(kh2lib.Cure),"Curaga")
-    magicUpdate(trackerTable,"Magnet",ReadByte(kh2lib.Magnet),"Magnega")
-    magicUpdate(trackerTable,"Reflect",ReadByte(kh2lib.Reflect),"Reflega")
+    magicUpdate(trackerTable,"Fire",ReadByte(kh2lib.Fire),"❇ Firaga")
+    magicUpdate(trackerTable,"Blizzard",ReadByte(kh2lib.Blizzard),"❇ Blizzaga")
+    magicUpdate(trackerTable,"Thunder",ReadByte(kh2lib.Thunder),"❇ Thundaga")
+    magicUpdate(trackerTable,"Cure",ReadByte(kh2lib.Cure),"❇ Curaga")
+    magicUpdate(trackerTable,"Magnet",ReadByte(kh2lib.Magnet),"❇ Magnega")
+    magicUpdate(trackerTable,"Reflect",ReadByte(kh2lib.Reflect),"❇ Reflega")
 
     -- proofs
-    keyItemUpdate(trackerTable,"ProofOfPeace",ReadByte(kh2lib.ProofOfPeace),"Proof of Peace")
-    keyItemUpdate(trackerTable,"ProofOfConnection",ReadByte(kh2lib.ProofOfConnection),"Proof of Connection")
-    keyItemUpdate(trackerTable,"ProofOfNonexistence",ReadByte(kh2lib.ProofOfNonexistence),"Proof of Nonexistence")
-    keyItemUpdate(trackerTable,"PromiseCharm",ReadByte(kh2lib.PromiseCharm),"Promise Charm")
+    keyItemUpdate(trackerTable,"ProofOfPeace",ReadByte(kh2lib.ProofOfPeace),"⭕ Proof of Peace")
+    keyItemUpdate(trackerTable,"ProofOfConnection",ReadByte(kh2lib.ProofOfConnection),"⭕ Proof of Connection")
+    keyItemUpdate(trackerTable,"ProofOfNonexistence",ReadByte(kh2lib.ProofOfNonexistence),"⭕ Proof of Nonexistence")
+    keyItemUpdate(trackerTable,"PromiseCharm",ReadByte(kh2lib.PromiseCharm),"⭕ Promise Charm")
 
-    -- trackerTable.TwilightThorn = 0
-    -- trackerTable.Axel2 = 0
-    -- trackerTable.FuturePete = 0
-    -- trackerTable.Demyx = 0
-    -- trackerTable.Scar = 0
-    -- trackerTable.Groundshaker = 0
-    -- trackerTable.VolcanoBlizzardLord = 0
-    -- trackerTable.Jafar = 0
-    -- trackerTable.DarkThorn = 0
-    -- trackerTable.Xaldin = 0
-    -- trackerTable.Roxas = 0
-    -- trackerTable.Xigbar = 0
-    -- trackerTable.Luxord = 0
-    -- trackerTable.Saix = 0
-    -- trackerTable.Xemnas = 0
-    -- trackerTable.ShanYu = 0
-    -- trackerTable.Stormrider = 0
-    -- trackerTable.OogieBoogie = 0
-    -- trackerTable.Experiment = 0
-    -- trackerTable.Hydra = 0
-    -- trackerTable.Hades = 0
-    -- trackerTable.Barbossa = 0
-    -- trackerTable.GrimReaper2 = 0
-    -- trackerTable.HostileProgram = 0
-    -- trackerTable.MCP = 0
-    -- trackerTable.YeetTheBear = 0
+end
+
+function detect_boss_completions()
+
+    bossBeaten(trackerTable,"TwilightThorn",0x02,34,157, "❌ Twilight Thorn")
+    bossBeaten(trackerTable,"Axel2",0x02,20,137, "❌ Axel 2")
+
+    bossBeaten(trackerTable,"FuturePete",0x0D,3,53, "❌ Future Pete")
+
+    bossBeaten(trackerTable,"Demyx",0x04,4,55, "❌ Demyx")
+
+    bossBeaten(trackerTable,"Scar",0x0A,14,55, "❌ Scar")
+    bossBeaten(trackerTable,"Groundshaker",0x0A,15,59, "❌ Groundshaker")
+
+    bossBeaten(trackerTable,"VolcanoBlizzardLord",0x07,3,59, "❌ Twin Lords")
+    bossBeaten(trackerTable,"Jafar",0x07,5,62, "❌ Genie Jafar")
+
+    bossBeaten(trackerTable,"DarkThorn",0x05,5,79, "❌ Dark Thorn")
+    bossBeaten(trackerTable,"Xaldin",0x05,15,82, "❌ Xaldin")
+
+    bossBeaten(trackerTable,"Roxas",0x12,21,65, "❌ Roxas")
+    bossBeaten(trackerTable,"Xigbar",0x12,10,57, "❌ Xigbar")
+    bossBeaten(trackerTable,"Luxord",0x12,14,58, "❌ Luxord")
+    bossBeaten(trackerTable,"Saix",0x12,15,56, "❌ Saix")
+    bossBeaten(trackerTable,"Xemnas",0x12,19,59, "❌ Xemnas")
+
+    bossBeaten(trackerTable,"ShanYu",0x08,9,75, "❌ Shan Yu")
+    bossBeaten(trackerTable,"Stormrider",0x08,8,79, "❌ Stormrider")
+
+    bossBeaten(trackerTable,"OogieBoogie",0x0E,9,55, "❌ Oogie Boogie")
+    bossBeaten(trackerTable,"Experiment",0x0E,7,64, "❌ The Experiment")
+
+    bossBeaten(trackerTable,"Hydra",0x06,18,171, "❌ Hydra")
+    bossBeaten(trackerTable,"Hades",0x06,19,202, "❌ Hades")
+
+    bossBeaten(trackerTable,"Barbossa",0x10,10,60, "❌ Barbossa")
+    bossBeaten(trackerTable,"GrimReaper2",0x10,1,54, "❌ Grim Reaper 2")
+
+    bossBeaten(trackerTable,"HostileProgram",0x11,4,55, "❌ Hostile Program")
+    bossBeaten(trackerTable,"MCP",0x11,9,59, "❌ MCP")
+
+    bossBeaten(trackerTable,"YeetTheBear",0x09,1,52, "❌ Yeet The Bear")
 
 end
 
@@ -339,25 +366,29 @@ function _OnFrame()
         StaticPointersLoaded = true
     end
 
-	World  = ReadByte(Now+0x00)
-	Room   = ReadByte(Now+0x01)
-	Place  = ReadShort(Now+0x00)
-	Door   = ReadShort(Now+0x02)
-	Map    = ReadShort(Now+0x04)
-	Btl    = ReadShort(Now+0x06)
-	Evt    = ReadShort(Now+0x08)
+	World   = ReadByte(Now+0x00)
+	Room    = ReadByte(Now+0x01)
+	Place   = ReadShort(Now+0x00)
+	Door    = ReadShort(Now+0x02)
+	Map     = ReadShort(Now+0x04)
+	Btl     = ReadShort(Now+0x06)
+	Evt     = ReadShort(Now+0x08)
+    BossEvt = ReadByte(Now+0x04)
+    EvtComplete = ReadByte(BtlEnd+0x820)
+
     if Place == 0x2002 and Events(0x01,Null,0x01) then --Station of Serenity Weapons
         if not wroteStartFile then
             wroteStartFile = true
             f = io.open("bingo_squares.txt","w")
             f:close()
         end
-        detect_changes()
+        detect_item_changes()
     end
 
+    detect_boss_completions()
 
     if ReadInt(Continue+0xC) ~= prevContinue and ReadByte(WriteLogic) == 0 then -- we room saved
-        detect_changes()
+        detect_item_changes()
         write_inventory()
     end
     prevContinue = ReadInt(Continue+0xC)
