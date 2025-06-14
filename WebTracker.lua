@@ -205,11 +205,9 @@ function BAR(File,Subfile,Offset) --Get address within a BAR file
 end
 
 function write_new_bingo_line(line)
-    print(line)
     local f = io.open("bingo_squares.txt", "r")
     local lines = {}
     for line in f:lines() do
-        print(line)
         table.insert(lines, line)
     end
     f:close()
@@ -222,8 +220,6 @@ function write_new_bingo_line(line)
     f:close()
     os.remove('bingo_squares.txt')
     os.rename('tmp_bingo_squares.txt', 'bingo_squares.txt')
-    print(ok)
-    print(err)
 end
 
 function write_inventory()
@@ -256,9 +252,15 @@ end
 function bossBeaten(table,tableEntry,world,room,evtId,outstring)
     if table[tableEntry] == 0 then
         -- time to check if we are in the right place and completed the event
-        if World==world and Room==room and BossEvt==evtID and EvtComplete==1 then
-            table[tableEntry] = 1
-            write_new_bingo_line(outstring)
+        if World==world then
+            if Room==room then
+                if Map==evtId then
+                    if EvtComplete~=0 then
+                        table[tableEntry] = 1
+                        write_new_bingo_line(outstring)
+                    end
+                end
+            end
         end
     end
 end
@@ -373,7 +375,6 @@ function _OnFrame()
 	Map     = ReadShort(Now+0x04)
 	Btl     = ReadShort(Now+0x06)
 	Evt     = ReadShort(Now+0x08)
-    BossEvt = ReadByte(Now+0x04)
     EvtComplete = ReadByte(BtlEnd+0x820)
 
     if Place == 0x2002 and Events(0x01,Null,0x01) then --Station of Serenity Weapons
